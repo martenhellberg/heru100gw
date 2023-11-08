@@ -1,0 +1,1468 @@
+substitutions:
+  entity_id_name: heru100
+  friendly_name: Heru 100
+  modbus_controller_id: heru100
+
+esphome:
+  name: heru100gw
+  comment: HERU 100 GW
+  platform: ESP32
+  board: esp32dev
+
+
+wifi:
+  use_address: !secret heru100gw_ip
+  ssid: !secret secure_iot_wifi_ssid
+  password: !secret secure_iot_wifi_password
+  power_save_mode: none
+
+
+# General ESPHome setup
+api:
+  reboot_timeout: 0s
+  encryption:
+    key: !secret heru100gw_api_key
+
+ota:
+  password: !secret heru100gw_ota_password
+
+
+logger:
+  level: DEBUG
+  baud_rate: 0
+
+
+# Set pins required for LilyGo T-CAN485 board
+output:
+  - platform: gpio
+    id: ENABLE_PIN # Enable the chip
+    pin:
+      number: GPIO19
+      inverted: true
+  - platform: gpio
+    id: SE_PIN # Enable autodirection
+    pin:
+      number: GPIO17
+      inverted: true
+  - platform: gpio
+    id: ENABLE_5V_PIN # Enable 5V pin for RS485 chip
+    pin:
+      number: GPIO16
+      inverted: true
+
+# Configure uart that will be used
+uart:
+  id: mod_bus
+  rx_pin: GPIO21
+  tx_pin: GPIO22
+  baud_rate: 19200
+  stop_bits: 1
+  parity: NONE
+  data_bits: 8
+
+modbus:
+  id: modbus1
+
+modbus_controller:
+  - id: ${modbus_controller_id}
+    ## the Modbus device addr
+    address: 0x1
+    modbus_id: modbus1
+    setup_priority: -10
+
+binary_sensor:
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Fire alarm input"
+    id: "${entity_id_name}_fire_alarm_input"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: discrete_input
+    address: 0
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Boost input"
+    id: "${entity_id_name}_boost_input"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: discrete_input
+    address: 1
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Overpressure input"
+    id: "${entity_id_name}_overpressure_input"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: discrete_input
+    address: 2
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Extended operation input"
+    id: "${entity_id_name}_extended_operation_input"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: discrete_input
+    address: 3
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Away input"
+    id: "${entity_id_name}_away_input"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: discrete_input
+    address: 4
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Filter input"
+    id: "${entity_id_name}_filter_input"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: discrete_input
+    address: 5
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Heater interlock"
+    id: "${entity_id_name}_heater_interlock"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: discrete_input
+    address: 6
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Fire alarm"
+    id: "${entity_id_name}_fire_alarm"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: discrete_input
+    address: 9
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Rotor alarm"
+    id: "${entity_id_name}_rotor_alarm"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: discrete_input
+    address: 10
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Freeze alarm"
+    id: "${entity_id_name}_freeze_alarm"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: discrete_input
+    address: 12
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Low supply alarm"
+    id: "${entity_id_name}_low_supply_alarm"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: discrete_input
+    address: 13
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Low rotor temperature alarm"
+    id: "${entity_id_name}_low_rotor_temperature_alarm"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: discrete_input
+    address: 14
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Temp. sensor open circuit alarm"
+    id: "${entity_id_name}_temp_sensor_open_circuit_alarm"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: discrete_input
+    address: 17
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Temp. sensor short circuit alarm"
+    id: "${entity_id_name}_temp_sensor_short_circuit_alarm"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: discrete_input
+    address: 18
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Pulser alarm"
+    id: "${entity_id_name}_pulser_alarm"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: discrete_input
+    address: 19
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Supply fan alarm"
+    id: "${entity_id_name}_supply_fan_alarm"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: discrete_input
+    address: 20
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Exhaust fan alarm"
+    id: "${entity_id_name}_exhaust_fan_alarm"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: discrete_input
+    address: 21
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Supply filter alarm"
+    id: "${entity_id_name}_supply_filter_alarm"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: discrete_input
+    address: 22
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Exhaust filter alarm"
+    id: "${entity_id_name}_exhaust_filter_alarm"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: discrete_input
+    address: 23
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Filter timer alarm"
+    id: "${entity_id_name}_filter_timer_alarm"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: discrete_input
+    address: 24
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Freeze protection B level"
+    id: "${entity_id_name}_freeze_protection_b_level"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: discrete_input
+    address: 25
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Freeze protection A level"
+    id: "${entity_id_name}_freeze_protection_a_level"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: discrete_input
+    address: 26
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Startup 1st phase"
+    id: "${entity_id_name}_startup_1st_phase"
+    register_type: discrete_input
+    address: 27
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Startup 2st phase"
+    id: "${entity_id_name}_startup_2st_phase"
+    register_type: discrete_input
+    address: 28
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Heating"
+    id: "${entity_id_name}_heating"
+    register_type: discrete_input
+    address: 29
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Recovery heat/cold"
+    id: "${entity_id_name}_recovery_heat_cold"
+    register_type: discrete_input
+    address: 30
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Cooling"
+    id: "${entity_id_name}_cooling"
+    register_type: discrete_input
+    address: 30
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} SNC Active"
+    id: "${entity_id_name}_snc_active"
+    register_type: discrete_input
+    address: 36
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} VOC boost"
+    id: "${entity_id_name}_voc_boost"
+    register_type: discrete_input
+    address: 37
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Pressure deviation alarm - Supply"
+    id: "${entity_id_name}_pressure_deviation_alarm_supply"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: discrete_input
+    address: 45
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Pressure deviation alarm - Extract"
+    id: "${entity_id_name}_pressure_deviation_alarm_extract"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: discrete_input
+    address: 46
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Lost com."
+    id: "${entity_id_name}_lost_com"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: discrete_input
+    address: 52
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Sensor open T1"
+    id: "${entity_id_name}_sensor_open_t1"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: read
+    address: 17
+    bitmask: 0x0001
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Sensor open T2"
+    id: "${entity_id_name}_sensor_open_t2"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: read
+    address: 17
+    bitmask: 0x0002
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Sensor open T3"
+    id: "${entity_id_name}_sensor_open_t3"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: read
+    address: 17
+    bitmask: 0x0004
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Sensor open T4"
+    id: "${entity_id_name}_sensor_open_t4"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: read
+    address: 17
+    bitmask: 0x0008
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Sensor open T5"
+    id: "${entity_id_name}_sensor_open_t5"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: read
+    address: 17
+    bitmask: 0x0010
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Sensor open T6"
+    id: "${entity_id_name}_sensor_open_t6"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: read
+    address: 17
+    bitmask: 0x0020
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Sensor shorted T1"
+    id: "${entity_id_name}_sensor_shorted_t1"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: read
+    address: 18
+    bitmask: 0x0001
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Sensor shorted T2"
+    id: "${entity_id_name}_sensor_shorted_t2"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: read
+    address: 18
+    bitmask: 0x0002
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Sensor shorted T3"
+    id: "${entity_id_name}_sensor_shorted_t3"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: read
+    address: 18
+    bitmask: 0x0004
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Sensor shorted T4"
+    id: "${entity_id_name}_sensor_shorted_t4"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: read
+    address: 18
+    bitmask: 0x0008
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Sensor shorted T5"
+    id: "${entity_id_name}_sensor_shorted_t5"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: read
+    address: 18
+    bitmask: 0x0010
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Sensor shorted T6"
+    id: "${entity_id_name}_sensor_shorted_t6"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: read
+    address: 18
+    bitmask: 0x0020
+
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Sensor open"
+    id: "${entity_id_name}_sensor_open"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: holding
+    address: 44
+    bitmask: 0x0002
+    filters:
+      - invert
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Sensor shorted"
+    id: "${entity_id_name}_sensor_shorted"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: holding
+    address: 44
+    bitmask: 0x0004
+    filters:
+      - invert
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Overheat protection"
+    id: "${entity_id_name}_overheat_protection"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: holding
+    address: 44
+    bitmask: 0x0008
+    filters:
+      - invert
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Supply temperature low"
+    id: "${entity_id_name}_supply_temperature_low"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: holding
+    address: 44
+    bitmask: 0x0020
+    filters:
+      - invert
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Rotor temperature low"
+    id: "${entity_id_name}_rotor_temperature_low"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: holding
+    address: 44
+    bitmask: 0x0040
+    filters:
+      - invert
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Fan failure"
+    id: "${entity_id_name}_fan_failure"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: holding
+    address: 44
+    bitmask: 0x0080
+    filters:
+      - invert
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Heat exchanger"
+    id: "${entity_id_name}_heat_exchanger"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: holding
+    address: 44
+    bitmask: 0x0100
+    filters:
+      - invert
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Duct pressure deviation"
+    id: "${entity_id_name}_duct_pressure_deviation"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: holding
+    address: 44
+    bitmask: 0x0200
+    filters:
+      - invert
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Pump alarm - Heating coil"
+    id: "${entity_id_name}_pump_alarm_heating_coil"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: holding
+    address: 44
+    bitmask: 0x0400
+    filters:
+      - invert
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Pump alarm - Cooler coil"
+    id: "${entity_id_name}_pump_alarm_cooler_coil"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: holding
+    address: 44
+    bitmask: 0x0800
+    filters:
+      - invert
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Filter alarm"
+    id: "${entity_id_name}_filter_alarm"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: holding
+    address: 44
+    bitmask: 0x1000
+    filters:
+      - invert
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Filter timer"
+    id: "${entity_id_name}_filter_timer"
+    entity_category: diagnostic
+    device_class: problem
+    register_type: holding
+    address: 44
+    bitmask: 0x2000
+    filters:
+      - invert
+
+
+sensor:
+  - platform: internal_temperature
+    name: "${friendly_name} ESP32 Internal Temperature"
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Outdoor temperature"
+    id: "${entity_id_name}_outdoor_temperature"
+    device_class: "temperature"
+    state_class: "measurement"
+    accuracy_decimals: 1
+    register_type: read
+    address: 1
+    unit_of_measurement: "°C"
+    value_type: S_WORD
+    filters:
+      - multiply: 0.1
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Supply air temperature"
+    id: "${entity_id_name}_supply_air_temperature"
+    device_class: "temperature"
+    state_class: "measurement"
+    accuracy_decimals: 1
+    register_type: read
+    address: 2
+    unit_of_measurement: "°C"
+    value_type: S_WORD
+    filters:
+      - multiply: 0.1
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Extract air temperature"
+    id: "${entity_id_name}_extract_air_temperature"
+    device_class: "temperature"
+    state_class: "measurement"
+    accuracy_decimals: 1
+    register_type: read
+    address: 3
+    unit_of_measurement: "°C"
+    value_type: S_WORD
+    filters:
+      - multiply: 0.1
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Exhaust air temperature"
+    id: "${entity_id_name}_exhaust_air_temperature"
+    device_class: "temperature"
+    state_class: "measurement"
+    accuracy_decimals: 1
+    register_type: read
+    address: 4
+    unit_of_measurement: "°C"
+    value_type: S_WORD
+    filters:
+      - multiply: 0.1
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Heat recovery temperature"
+    id: "${entity_id_name}_heat_recovery_temperature"
+    device_class: "temperature"
+    state_class: "measurement"
+    accuracy_decimals: 1
+    register_type: read
+    address: 6
+    unit_of_measurement: "°C"
+    value_type: S_WORD
+    filters:
+      - multiply: 0.1
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Supply pressure"
+    id: "${entity_id_name}_supply_pressure"
+    device_class: "pressure"
+    state_class: "measurement"
+    register_type: read
+    address: 11
+    unit_of_measurement: "Pa"
+    value_type: S_WORD
+    # filters:
+    #   - multiply: 0.1
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Extract pressure"
+    id: "${entity_id_name}_extract_pressure"
+    device_class: "pressure"
+    state_class: "measurement"
+    register_type: read
+    address: 12
+    unit_of_measurement: "Pa"
+    value_type: S_WORD
+    # filters:
+    #   - multiply: 0.1
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Filter days left"
+    id: "${entity_id_name}_filter_days_left"
+    device_class: "duration"
+    state_class: "measurement"
+    register_type: read
+    address: 19
+    unit_of_measurement: "d"
+    value_type: S_WORD
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Supply fan power"
+    id: "${entity_id_name}_current_supply_fan_power"
+    state_class: "measurement"
+    register_type: read
+    address: 24
+    unit_of_measurement: "%"
+    value_type: S_WORD
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Exhaust fan power"
+    id: "${entity_id_name}_current_exhaust_fan_power"
+    state_class: "measurement"
+    register_type: read
+    address: 25
+    unit_of_measurement: "%"
+    value_type: S_WORD
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Supply fan speed"
+    id: "${entity_id_name}_current_supply_fan_speed"
+    state_class: "measurement"
+    register_type: read
+    address: 26
+    unit_of_measurement: "rpm"
+    value_type: S_WORD
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Exhaust fan speed"
+    id: "${entity_id_name}_current_exhaust_fan_speed"
+    state_class: "measurement"
+    register_type: read
+    address: 27
+    unit_of_measurement: "rpm"
+    value_type: S_WORD
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Heating power"
+    id: "${entity_id_name}_current_heating_power"
+    state_class: "measurement"
+    register_type: read
+    address: 28
+    value_type: S_WORD
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Heat/cold recovery power"
+    id: "${entity_id_name}_current_heat_cold_recovery_power"
+    state_class: "measurement"
+    register_type: read
+    address: 29
+    value_type: S_WORD
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Cooling power"
+    id: "${entity_id_name}_current_cooling_power"
+    state_class: "measurement"
+    register_type: read
+    address: 30
+    value_type: S_WORD
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Supply fan control voltage"
+    id: "${entity_id_name}_supply_fan_control_voltage"
+    device_class: "voltage"
+    state_class: "measurement"
+    accuracy_decimals: 1
+    register_type: read
+    address: 31
+    unit_of_measurement: "V"
+    value_type: S_WORD
+    filters:
+      - multiply: 0.1
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Exhaust fan control voltage"
+    id: "${entity_id_name}_exhaust_fan_control_voltage"
+    device_class: "voltage"
+    state_class: "measurement"
+    accuracy_decimals: 1
+    register_type: read
+    address: 32
+    unit_of_measurement: "V"
+    value_type: S_WORD
+    filters:
+      - multiply: 0.1
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Min exhaust fan speed, EC"
+    id: "${entity_id_name}_min_exhaust_fan_speed_ec"
+    state_class: "measurement"
+    register_type: holding
+    address: 4
+    unit_of_measurement: "%"
+    value_type: S_WORD
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Max exhaust fan speed, EC"
+    id: "${entity_id_name}_max_exhaust_fan_speed_ec"
+    state_class: "measurement"
+    register_type: holding
+    address: 5
+    unit_of_measurement: "%"
+    value_type: S_WORD
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Std supply fan airflow setpoint"
+    id: "${entity_id_name}_std_supply_fan_airflow_setpoint"
+    state_class: "measurement"
+    register_type: holding
+    address: 6
+    unit_of_measurement: "l/s"
+    value_type: S_WORD
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Std exhaust fan airflow setpoint"
+    id: "${entity_id_name}_std_exhaust_fan_airflow_setpoint"
+    state_class: "measurement"
+    register_type: holding
+    address: 7
+    unit_of_measurement: "l/s"
+    value_type: S_WORD
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Min exhaust fan airflow setpoint"
+    id: "${entity_id_name}_min_exhaust_fan_airflow_setpoint"
+    state_class: "measurement"
+    register_type: holding
+    address: 8
+    unit_of_measurement: "l/s"
+    value_type: S_WORD
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Max exhaust fan airflow setpoint"
+    id: "${entity_id_name}_max_exhaust_fan_airflow_setpoint"
+    state_class: "measurement"
+    register_type: holding
+    address: 9
+    unit_of_measurement: "l/s"
+    value_type: S_WORD
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Supply filter - Final pressure diff."
+    id: "${entity_id_name}_supply_filter_final_pressure_diff"
+    device_class: "pressure"
+    state_class: "measurement"
+    register_type: holding
+    address: 41
+    unit_of_measurement: "Pa"
+    value_type: S_WORD
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Extract filter - Final pressure diff."
+    id: "${entity_id_name}_extract_filter_final_pressure_diff"
+    device_class: "pressure"
+    state_class: "measurement"
+    register_type: holding
+    address: 42
+    unit_of_measurement: "Pa"
+    value_type: S_WORD
+
+switch:
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Overpressure mode"
+    id: "${entity_id_name}_overpressure_mode"
+    register_type: coil
+    address: 1
+    bitmask: 0x1
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Boost mode"
+    id: "${entity_id_name}_boost_mode"
+    register_type: coil
+    address: 2
+    bitmask: 0x1
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Away mode"
+    id: "${entity_id_name}_away_mode"
+    register_type: coil
+    address: 3
+    bitmask: 0x1
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} SNC enabled"
+    id: "${entity_id_name}_snc_enabled"
+    register_type: holding
+    address: 18
+    bitmask: 0x1
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Standby temp evaluation enabled"
+    id: "${entity_id_name}_standby_temp_evaluation_enabled"
+    register_type: holding
+    address: 22
+    bitmask: 0x1
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Eco. setpoint enabled"
+    id: "${entity_id_name}_eco_setpoint_enabled"
+    register_type: holding
+    address: 48
+    bitmask: 0x1
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Preheater enabled"
+    id: "${entity_id_name}_preheater_enabled"
+    register_type: holding
+    address: 63
+    bitmask: 0x1
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Heater enabled"
+    id: "${entity_id_name}_heater_enabled"
+    register_type: holding
+    address: 66
+    bitmask: 0x1
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Cooler enabled"
+    id: "${entity_id_name}_cooler_enabled"
+    register_type: holding
+    address: 68
+    bitmask: 0x1
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Week shedule enabled"
+    id: "${entity_id_name}_week_shedule_enabled"
+    register_type: holding
+    address: 139
+    bitmask: 0x1
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} WS1 Program enabled"
+    id: "${entity_id_name}_ws1_program_enabled"
+    register_type: holding
+    address: 147
+    bitmask: 0x1
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} WS2 Program enabled"
+    id: "${entity_id_name}_ws2_program_enabled"
+    register_type: holding
+    address: 157
+    bitmask: 0x1
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} WS3 Program enabled"
+    id: "${entity_id_name}_ws3_program_enabled"
+    register_type: holding
+    address: 167
+    bitmask: 0x1
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} WS4 Program enabled"
+    id: "${entity_id_name}_ws4_program_enabled"
+    register_type: holding
+    address: 177
+    bitmask: 0x1
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} WS5 Program enabled"
+    id: "${entity_id_name}_ws5_program_enabled"
+    register_type: holding
+    address: 187
+    bitmask: 0x1
+
+number:
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Temperature setpoint (economy)"
+    id: "${entity_id_name}_temperature_setpoint_economy"
+    device_class: "temperature"
+    register_type: holding
+    address: 0
+    unit_of_measurement: "°C"
+    value_type: S_WORD
+    min_value: 15
+    max_value: 39
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Temperature setpoint (comfort)"
+    id: "${entity_id_name}_temperature_setpoint_comfort"
+    device_class: "temperature"
+    register_type: holding
+    address: 1
+    unit_of_measurement: "°C"
+    value_type: S_WORD
+    min_value: 15
+    max_value: 40
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Min supply temperature"
+    id: "${entity_id_name}_min_supply_temperature"
+    device_class: "temperature"
+    register_type: holding
+    address: 12
+    unit_of_measurement: "°C"
+    value_type: S_WORD
+    min_value: 15
+    max_value: 19
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Max supply temperature"
+    id: "${entity_id_name}_max_supply_temperature"
+    device_class: "temperature"
+    register_type: holding
+    address: 13
+    unit_of_measurement: "°C"
+    value_type: S_WORD
+    min_value: 20
+    max_value: 40
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Supply cold limit A"
+    id: "${entity_id_name}_supply_cold_limit_a"
+    device_class: "temperature"
+    register_type: holding
+    address: 14
+    unit_of_measurement: "°C"
+    value_type: S_WORD
+    min_value: 2
+    max_value: 10
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Supply cold limit B"
+    id: "${entity_id_name}_supply_cold_limit_b"
+    device_class: "temperature"
+    register_type: holding
+    address: 15
+    unit_of_measurement: "°C"
+    value_type: S_WORD
+    min_value: 5
+    max_value: 12
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Freeze protection limit"
+    id: "${entity_id_name}_freeze_protection_limit"
+    device_class: "temperature"
+    register_type: holding
+    address: 16
+    unit_of_measurement: "°C"
+    value_type: S_WORD
+    min_value: 5
+    max_value: 10
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} SNC indoor-outdoor diff. limit"
+    id: "${entity_id_name}_snc_indoor_outdoor_diff_limit"
+    device_class: "temperature"
+    register_type: holding
+    address: 19
+    unit_of_measurement: "°C"
+    value_type: S_WORD
+    step: 0.1
+    min_value: 1
+    max_value: 10
+    multiply: 10
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} SNC exhaust high limit"
+    id: "${entity_id_name}_snc_exhaust_high_limit"
+    device_class: "temperature"
+    register_type: holding
+    address: 20
+    unit_of_measurement: "°C"
+    value_type: S_WORD
+    min_value: 18
+    max_value: 24
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} SNC exhaust low limit"
+    id: "${entity_id_name}_snc_exhaust_low_limit"
+    device_class: "temperature"
+    register_type: holding
+    address: 20
+    unit_of_measurement: "°C"
+    value_type: S_WORD
+    min_value: 19
+    max_value: 26
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Standby temp evaluation interval"
+    id: "${entity_id_name}_standby_temp_evaluation_interval"
+    register_type: holding
+    address: 23
+    unit_of_measurement: "h"
+    value_type: S_WORD
+    min_value: 1
+    max_value: 4
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Standby temp evaluation time"
+    id: "${entity_id_name}_standby_temp_evaluation_time"
+    register_type: holding
+    address: 24
+    unit_of_measurement: "min"
+    value_type: S_WORD
+    min_value: 5
+    max_value: 15
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Min. operating time"
+    id: "${entity_id_name}_min_operating_time"
+    register_type: holding
+    address: 25
+    unit_of_measurement: "min"
+    value_type: S_WORD
+    min_value: 30
+    max_value: 120
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Boost duration"
+    id: "${entity_id_name}_boost_duration"
+    register_type: holding
+    address: 26
+    unit_of_measurement: "min"
+    value_type: S_WORD
+    min_value: 10
+    max_value: 240
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Overpressure duration"
+    id: "${entity_id_name}_overpressure_duration"
+    register_type: holding
+    address: 27
+    unit_of_measurement: "min"
+    value_type: S_WORD
+    min_value: 10
+    max_value: 60
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Overpressure offset"
+    id: "${entity_id_name}_overpressure_offset"
+    register_type: holding
+    address: 28
+    unit_of_measurement: "%"
+    value_type: S_WORD
+    min_value: 5
+    max_value: 100
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Filter measurement, hour"
+    id: "${entity_id_name}_filter_measurement_hour"
+    register_type: holding
+    address: 37
+    unit_of_measurement: "h"
+    value_type: S_WORD
+    min_value: 0
+    max_value: 23
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Filter measurement, minute"
+    id: "${entity_id_name}_filter_measurement_minute"
+    register_type: holding
+    address: 38
+    unit_of_measurement: "min"
+    value_type: S_WORD
+    min_value: 0
+    max_value: 59
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Filter speed increase"
+    id: "${entity_id_name}_filter_speed_increase"
+    register_type: holding
+    address: 39
+    unit_of_measurement: "%pts"
+    value_type: S_WORD
+    min_value: 5
+    max_value: 50
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Setpoint max limit (Comfort)"
+    id: "${entity_id_name}_setpoint_max_limit_comfort"
+    device_class: "temperature"
+    register_type: holding
+    address: 47
+    unit_of_measurement: "°C"
+    value_type: S_WORD
+    min_value: 15
+    max_value: 40
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Preheater temperature setpoint"
+    id: "${entity_id_name}_preheater_temperature_setpoint"
+    device_class: "temperature"
+    register_type: holding
+    address: 64
+    unit_of_measurement: "°C"
+    value_type: S_WORD
+    min_value: -40
+    max_value: 40
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Date, Year"
+    id: "${entity_id_name}_date_year"
+    register_type: holding
+    address: 399
+    value_type: S_WORD
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Date, Month"
+    id: "${entity_id_name}_date_month"
+    register_type: holding
+    address: 400
+    value_type: S_WORD
+    min_value: 1
+    max_value: 12
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Date, Day"
+    id: "${entity_id_name}_date_day"
+    register_type: holding
+    address: 401
+    value_type: S_WORD
+    min_value: 1
+    max_value: 31
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Clock, Hour"
+    id: "${entity_id_name}_clock_hour"
+    register_type: holding
+    address: 402
+    value_type: S_WORD
+    min_value: 0
+    max_value: 23
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Clock, Minute"
+    id: "${entity_id_name}_clock_minute"
+    register_type: holding
+    address: 403
+    value_type: S_WORD
+    min_value: 0
+    max_value: 59
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Clock, Second"
+    id: "${entity_id_name}_clock_second"
+    register_type: holding
+    address: 404
+    value_type: S_WORD
+    min_value: 0
+    max_value: 59
+
+
+select:
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Temperature regulation mode"
+    id: "${entity_id_name}_temperature_regulation_mode"
+    address: 11
+    value_type: S_WORD
+    optionsmap:
+      "Supply": 0
+      "Extract": 1
+      "Room": 2
+      "Extract S/W": 3
+      "Room S/W": 4
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Fire sensor type"
+    id: "${entity_id_name}_fire_sensor_type"
+    address: 29
+    value_type: S_WORD
+    optionsmap:
+      "None": 0
+      "Normally open (NO)": 1
+      "Normally closed (NC)": 2
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Fire mode"
+    id: "${entity_id_name}_fire_mode"
+    address: 30
+    value_type: S_WORD
+    optionsmap:
+      "Fans off": 0
+      "Exhaust fan only": 1
+      "Supply fan only": 2
+      "Both fans": 3
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Filter measurement, weekday"
+    id: "${entity_id_name}_filter_measurement_weekday"
+    address: 36
+    value_type: S_WORD
+    optionsmap:
+      "Monday": 0
+      "Tuesday": 1
+      "Wednesday": 2
+      "Thursday": 3
+      "Friday": 4
+      "Saturday": 5
+      "Sunday": 6
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Filter measurement mode"
+    id: "${entity_id_name}_filter_measurement_mode"
+    address: 40
+    value_type: S_WORD
+    optionsmap:
+      "Off": 0
+      "Switch": 1
+      "Speed inc.": 2
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Preheater type"
+    id: "${entity_id_name}_preheater_type"
+    address: 62
+    value_type: S_WORD
+    optionsmap:
+      "None": 0
+      "Electric": 1
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Heater type"
+    id: "${entity_id_name}_heater_type"
+    address: 65
+    value_type: S_WORD
+    optionsmap:
+      "None": 0
+      "Water": 1
+      "Electric": 2
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Cooler type"
+    id: "${entity_id_name}_cooler_type"
+    address: 67
+    value_type: S_WORD
+    optionsmap:
+      "None": 0
+      "Water": 1
+
+text_sensor:
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Supply fan step"
+    id: "${entity_id_name}_current_supply_fan_step"
+    register_type: read
+    address: 22
+    raw_encode: HEXBYTES
+    lambda: |-
+      uint16_t value = modbus_controller::word_from_hex_str(x, 0);
+      switch (value) {
+        case 0: return std::string("Off");
+        case 1: return std::string("Min");
+        case 2: return std::string("Std");
+        case 3: return std::string("Max");
+        default: return std::string("Unknown");
+      }
+      return x;
+
+  - platform: modbus_controller
+    modbus_controller_id: ${modbus_controller_id}
+    name: "${friendly_name} Exhaust fan step"
+    id: "${entity_id_name}_current_exhaust_fan_step"
+    register_type: read
+    address: 23
+    raw_encode: HEXBYTES
+    lambda: |-
+      uint16_t value = modbus_controller::word_from_hex_str(x, 0);
+      switch (value) {
+        case 0: return std::string("Off");
+        case 1: return std::string("Min");
+        case 2: return std::string("Std");
+        case 3: return std::string("Max");
+        default: return std::string("Unknown");
+      }
+      return x;
+
+button:
+  - platform: template
+    name: "Reset filter timer"
+    id: "heru100_reset_filter_timer"
+    entity_category: diagnostic
+    icon: "mdi:air-filter"
+    on_press:
+      then:
+        - lambda: |-
+            modbus_controller::ModbusController *controller = id(${modbus_controller_id});
+            modbus_controller::ModbusCommandItem resetfilter = modbus_controller::ModbusCommandItem::create_write_single_coil(controller, 5, 1);
+            controller->queue_command(resetfilter);
+
+  - platform: template
+    name: "Clear alarms"
+    id: "heru100_clear_alarms"
+    entity_category: diagnostic
+    on_press:
+      then:
+        - lambda: |-
+            modbus_controller::ModbusController *controller = id(${modbus_controller_id});
+            modbus_controller::ModbusCommandItem resetfilter = modbus_controller::ModbusCommandItem::create_write_single_coil(controller, 4, 1);
+            controller->queue_command(resetfilter);
+
+  # Some helper functions to restart ESPHome from HA
+  - platform: restart
+    name: "${friendly_name} ESP32 Restart"
+    entity_category: diagnostic
+  - platform: safe_mode
+    name: "${friendly_name} ESP32 Safe Mode Boot"
+    entity_category: diagnostic
